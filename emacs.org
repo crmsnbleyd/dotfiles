@@ -1,0 +1,88 @@
+#+title: Dotfiles
+#+author: Arnav Andrew Jose
+
+* Before loading Init.el
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/early-init.el
+  :END:
+
+** Disabling package.el and using straight.el instead
+  #+begin_src emacs-lisp
+    ;; source: https://github.com/arnav-jose-iwx/dotfiles
+    (setq package-enable-at-startup nil)
+  #+end_src
+
+* Emacs config
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
+
+** Using straight.el
+
+Bootstrapping it, installing use-package and then
+setting straight as the package manager for use-package.
+
+  #+begin_src emacs-lisp
+    ;; source: https://github.com/arnav-jose-iwx/dotfiles
+    (defvar bootstrap-version)
+    (let ((bootstrap-file
+	   (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+	  (bootstrap-version 6))
+      (unless (file-exists-p bootstrap-file)
+	(with-current-buffer
+	    (url-retrieve-synchronously
+	     "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+	     'silent 'inhibit-cookies)
+	  (goto-char (point-max))
+	  (eval-print-last-sexp)))
+      (load bootstrap-file nil 'nomessage))
+
+    ;; Install use-package
+    (straight-use-package 'use-package)
+
+    ;; use-package will use straight.el by default
+    (use-package straight
+      :custom
+      (straight-use-package-by-default t))
+  #+end_src
+
+
+** Evil setup
+evil-mode initializes on startup.
+
+evil-escape simulates <ESC> key in non-normal states
+when pressing 'evil-escape-key-sequence.
+
+evil-leader works in motion and normal states.
+Press <leader> and the set-key to use the function.
+#+begin_src  emacs-lisp
+(use-package evil
+  :init (evil-mode))
+
+(use-package evil-escape
+  :after (evil)
+  :config
+  (evil-escape-mode)
+  :custom
+  (evil-escape-key-sequence "jk")
+  (evil-escape-delay 0.2))
+
+(use-package evil-leader
+  :after (evil)
+  :config
+  (global-evil-leader-mode t)
+  (evil-leader/set-leader "<SPC>")
+  (evil-leader/set-key
+   "." 'find-file
+   ";" 'comment-or-uncomment-region
+   "d x w" 'delete-trailing-whitespace
+   "f s" 'save-buffer
+   "p f" 'forward-sexp
+   "p b" 'backward-sexp
+   "p u" 'sp-up-sexp
+   "p d" 'sp-down-sexp))
+
+(use-package evil-surround
+  :after (evil)
+  :config (global-evil-surround-mode))
+#+end_src
