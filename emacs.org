@@ -14,8 +14,14 @@
 
 * Emacs config
   :PROPERTIES:
-  :header-args: :tangle ~/.emacs.d/init.el
+  :header-args: :tangle ~/init.el
   :END:
+
+** Enable lexical-binding and add link to repo
+#+begin_src  emacs-lisp
+    ;; -*- lexical-binding: t -*-
+    ;; source: https://github.com/arnav-jose-iwx/dotfiles
+#+end_src
 
 ** Using straight.el
 
@@ -23,7 +29,6 @@ Bootstrapping it, installing use-package and then
 setting straight as the package manager for use-package.
 
   #+begin_src emacs-lisp
-    ;; source: https://github.com/arnav-jose-iwx/dotfiles
     (defvar bootstrap-version)
     (let ((bootstrap-file
 	   (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -46,7 +51,22 @@ setting straight as the package manager for use-package.
       (straight-use-package-by-default t))
   #+end_src
 
+** Doom-themes and doom-modeline
+Install doom-themes, enable bold and italics, and load a theme from the package
 
+Install and enable doom-modeline. Does not work well in TUI.
+#+begin_src emacs-lisp
+(use-package doom-themes
+  :ensure t
+  :config
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (load-theme 'doom-henna t))
+  
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
+#+end_src
 ** Evil setup
 evil-mode initializes on startup.
 
@@ -85,4 +105,19 @@ Press <leader> and the set-key to use the function.
 (use-package evil-surround
   :after (evil)
   :config (global-evil-surround-mode))
+#+end_src
+
+** Magit (git porcelain)
+[[https://magit.vc][Magit home page]]
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :bind ("C-x g" . magit-status))
+#+end_src
+** Smart parentheses
+#+begin_src emacs-lisp
+(use-package smartparens
+  :hook (prog-mode . smartparens-mode)
+  :init
+  (require 'smartparens-config))
 #+end_src
