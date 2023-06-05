@@ -14,3 +14,5 @@ Run M-x org-babel-tangle-file in the org file of your choice to
 populate the config files with my setup.
 
 Pull requests are welcome for any enhancements or bugfixes.
+
+mail me at [[mailto:arnav.jose@gmail.com][My personal e-mail]]
