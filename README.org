@@ -1,0 +1,16 @@
+#+title: README for the dotfiles repository.
+#+author: Arnav Andrew Jose
+
+This repository is a literate store of the dotfiles I use in my daily work.
+Currently that consists of:
+
+- emacs
+- zsh
+
+I prefer to use .zshrc for my zsh config
+and the .emacs.d dir for the emacs config.
+
+Run M-x org-babel-tangle-file in the org file of your choice to
+populate the config files with my setup.
+
+Pull requests are welcome for any enhancements or bugfixes.

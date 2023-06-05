@@ -1,6 +1,12 @@
 #+title: Dotfiles
 #+author: Arnav Andrew Jose
 
+This emacs config is for my work system.
+I have opted to start afresh and not copy over any
+configuration from my personal machine(s).
+I would like to try keeping this as minimalist and
+low-fuss as possible.
+
 * Before loading Init.el
   :PROPERTIES:
   :header-args: :tangle ~/.emacs.d/early-init.el
