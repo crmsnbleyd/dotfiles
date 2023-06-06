@@ -29,6 +29,14 @@ low-fuss as possible.
     ;; source: https://github.com/arnav-jose-iwx/dotfiles
 #+end_src
 
+** Completion and hide-show minor mode
+z-c is hide-show close and z-o is hide-show open
+#+begin_src emacs-lisp
+(use-package company
+  :hook
+  ((emacs-lisp-mode org-mode python-mode) . company-mode )
+  ((emacs-lisp-mode python-mode) . hide-show-minor-mode ))
+#+end_src
 ** Using straight.el
 
 Bootstrapping it, installing use-package and then
@@ -81,36 +89,58 @@ when pressing 'evil-escape-key-sequence.
 
 evil-leader works in motion and normal states.
 Press <leader> and the set-key to use the function.
+
+undo-fu for vi-like undo and redo functionality
+
+avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project page]] 
 #+begin_src  emacs-lisp
-(use-package evil
-  :init (evil-mode))
+  (use-package evil
+    :init (evil-mode)
+    :config
+    (evil-define-key 'normal org-mode-map (kbd "<tab>") #'org-cycle))
 
-(use-package evil-escape
-  :after (evil)
-  :config
-  (evil-escape-mode)
-  :custom
-  (evil-escape-key-sequence "jk")
-  (evil-escape-delay 0.2))
+  (use-package evil-escape
+    :after (evil)
+    :config
+    (evil-escape-mode)
+    :custom
+    (evil-escape-key-sequence "jk")
+    (evil-escape-delay 0.2))
 
-(use-package evil-leader
-  :after (evil)
-  :config
-  (global-evil-leader-mode t)
-  (evil-leader/set-leader "<SPC>")
-  (evil-leader/set-key
-   "." 'find-file
-   ";" 'comment-or-uncomment-region
-   "d x w" 'delete-trailing-whitespace
-   "f s" 'save-buffer
-   "p f" 'forward-sexp
-   "p b" 'backward-sexp
-   "p u" 'sp-up-sexp
-   "p d" 'sp-down-sexp))
+  (use-package evil-leader
+    :after (evil)
+    :config
+    (global-evil-leader-mode t)
+    (evil-leader/set-leader "<SPC>")
+    (evil-leader/set-key
+      "." 'find-file
+      ";" 'comment-or-uncomment-region
+      "d x w" 'delete-trailing-whitespace
+      "f s" 'save-buffer
+      "p f" 'forward-sexp
+      "p b" 'backward-sexp
+      "p u" 'sp-up-sexp
+      "p d" 'sp-down-sexp))
 
-(use-package evil-surround
-  :after (evil)
-  :config (global-evil-surround-mode))
+  (use-package evil-surround
+    :after (evil)
+    :config (global-evil-surround-mode))
+
+  (use-package undo-fu
+    :straight
+    (undo-fu :type git :host github :repo "emacsmirror/undo-fu")
+    :bind
+    (("C-z" . undo-fu-only-undo)
+     ("C-S-z" . undo-fu-only-redo))
+    :custom
+    (evil-undo-system 'undo-fu))
+
+  (use-package avy  
+    :bind
+    (:map evil-normal-state-map
+	  ("g s s" . avy-goto-char-2))
+    :custom
+    (avy-keys . (?a ?s ?f ?j ?k ?l ?z ?x ?c)))
 #+end_src
 
 ** Magit (git porcelain)
@@ -126,4 +156,57 @@ Press <leader> and the set-key to use the function.
   :hook (prog-mode . smartparens-mode)
   :init
   (require 'smartparens-config))
+#+end_src
+
+** Vertico
+Buffer completion and vertical listing of options.
+#+begin_src emacs-lisp
+  (use-package vertico
+    :init
+    (vertico-mode)
+    :config 
+    (setq completion-styles '(basic substring partial-completion flex)
+	  read-file-name-completion-ignore-case t
+	  read-buffer-completion-ignore-case t
+	  completion-ignore-case t
+	  vertico-cycle t))
+#+end_src
+** Yaml mode
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :bind (:map yaml-mode-map
+		("C-m" . newline-and-indent))
+    :mode "\\.y(a)?ml\\'")
+#+end_src
+** General emacs configuration
+#+begin_src emacs-lisp
+  (use-package emacs
+    :init
+    ;; Add prompt indicator to `completing-read-multiple'.
+    ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
+    (defun crm-indicator (args)
+      (cons (format "[CRM%s] %s"
+		    (replace-regexp-in-string
+		     "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+		     crm-separator)
+		    (car args))
+	    (cdr args)))
+    (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+    ;; Do not allow the cursor in the minibuffer prompt
+    (setq minibuffer-prompt-properties
+	  '(read-only t cursor-intangible t face minibuffer-prompt))
+    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+    (add-hook 'eshell-mode-hook (lambda () (display-line-numbers-mode 0)))
+    ;; (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode 0)))
+
+    (setq enable-recursive-minibuffers t)
+    (setq-default use-short-answers t)
+
+    :config
+    (windmove-default-keybindings)
+    (global-display-line-numbers-mode)
+    (menu-bar-mode -1)
+    (scroll-bar-mode -1)
+    (tool-bar-mode -1))
 #+end_src
