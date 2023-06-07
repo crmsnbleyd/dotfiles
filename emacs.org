@@ -20,7 +20,7 @@ low-fuss as possible.
 
 * Emacs config
   :PROPERTIES:
-  :header-args: :tangle ~/init.el
+  :header-args: :tangle ~/.emacs.d/init.el
   :END:
 
 ** Enable lexical-binding and add link to repo
@@ -29,14 +29,6 @@ low-fuss as possible.
     ;; source: https://github.com/arnav-jose-iwx/dotfiles
 #+end_src
 
-** Completion and hide-show minor mode
-z-c is hide-show close and z-o is hide-show open
-#+begin_src emacs-lisp
-(use-package company
-  :hook
-  ((emacs-lisp-mode org-mode python-mode) . company-mode )
-  ((emacs-lisp-mode python-mode) . hide-show-minor-mode ))
-#+end_src
 ** Using straight.el
 
 Bootstrapping it, installing use-package and then
@@ -65,6 +57,14 @@ setting straight as the package manager for use-package.
       (straight-use-package-by-default t))
   #+end_src
 
+** Completion and hide-show minor mode
+z-c is hide-show close and z-o is hide-show open
+#+begin_src emacs-lisp
+(use-package company
+  :hook
+  ((emacs-lisp-mode org-mode python-mode) . company-mode )
+  ((emacs-lisp-mode python-mode) . hs-minor-mode ))
+#+end_src
 ** Doom-themes and doom-modeline
 Install doom-themes, enable bold and italics, and load a theme from the package
 
@@ -140,9 +140,17 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
     (:map evil-normal-state-map
 	  ("g s s" . avy-goto-char-2))
     :custom
-    (avy-keys . (?a ?s ?f ?j ?k ?l ?z ?x ?c)))
+    (avy-keys '(?a ?s ?f ?j ?k ?l ?z ?x ?c)))
 #+end_src
 
+** Elpy
+Python IDE features (I do not prefer using LSP)
+#+begin_src emacs-lisp
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+#+end_src
 ** Magit (git porcelain)
 [[https://magit.vc][Magit home page]]
 
@@ -160,6 +168,7 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
 
 ** Vertico
 Buffer completion and vertical listing of options.
+Savehist so vertico knows the last command used.
 #+begin_src emacs-lisp
   (use-package vertico
     :init
@@ -170,6 +179,12 @@ Buffer completion and vertical listing of options.
 	  read-buffer-completion-ignore-case t
 	  completion-ignore-case t
 	  vertico-cycle t))
+
+
+  ;; Persist history over Emacs restarts. Vertico sorts by history position.
+  (use-package savehist
+    :init
+    (savehist-mode))
 #+end_src
 ** Yaml mode
 #+begin_src emacs-lisp
