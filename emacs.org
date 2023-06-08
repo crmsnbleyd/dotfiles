@@ -179,6 +179,13 @@ Python IDE features (I do not prefer using LSP). Using advice for lazy loading, 
     (("M-S-<up>" . move-text-up)
      ("M-S-<down>" . move-text-down)))
 #+end_src
+** Rainbow delimiters
+Really necessary for legibility of code blocks.
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook
+    ((prog-mode . rainbow-delimiters-mode)))
+#+end_src
 ** Smart parentheses
 #+begin_src emacs-lisp
 (use-package smartparens
