@@ -1,4 +1,4 @@
-#+title: Dotfiles
+#+title: Emacs configuration
 #+author: Arnav Andrew Jose
 
 This emacs config is for my work system.
