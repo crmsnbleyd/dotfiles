@@ -57,13 +57,27 @@ setting straight as the package manager for use-package.
       (straight-use-package-by-default t))
   #+end_src
 
+** Org Babel load all languages when needed
+Do not need to add any languages needed one-by-one.
+[[https://emacs.stackexchange.com/questions/20577/org-babel-load-all-languages-on-demand][Stack Exchange answer used as source]]
+#+begin_src emacs-lisp
+  (defadvice org-babel-execute-src-block (around load-language nil activate)
+    "Load language if needed."
+    (let ((language (org-element-property :language (org-element-at-point))))
+      (unless (cdr (assoc (intern language) org-babel-load-languages))
+	(add-to-list 'org-babel-load-languages (cons (intern language) t))
+	(org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
+      ad-do-it))
+#+end_src
 ** Completion and hide-show minor mode
 z-c is hide-show close and z-o is hide-show open
 #+begin_src emacs-lisp
-(use-package company
-  :hook
-  ((emacs-lisp-mode org-mode python-mode) . company-mode )
-  ((emacs-lisp-mode python-mode) . hs-minor-mode ))
+  (use-package company
+    :hook
+    ((emacs-lisp-mode org-mode python-mode) . company-mode )
+    ((emacs-lisp-mode python-mode) . hs-minor-mode )
+    :custom
+    (company-idle-delay 0))
 #+end_src
 ** Doom-themes and doom-modeline
 Install doom-themes, enable bold and italics, and load a theme from the package
@@ -144,12 +158,12 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
 #+end_src
 
 ** Elpy
-Python IDE features (I do not prefer using LSP)
+Python IDE features (I do not prefer using LSP). Using advice for lazy loading, can just use (elpy-enable) instead.
 #+begin_src emacs-lisp
 (use-package elpy
-  :ensure t
+  :defer t
   :init
-  (elpy-enable))
+  (advice-add 'python-mode :before 'elpy-enable))
 #+end_src
 ** Magit (git porcelain)
 [[https://magit.vc][Magit home page]]
@@ -157,6 +171,13 @@ Python IDE features (I do not prefer using LSP)
 #+begin_src emacs-lisp
   (use-package magit
     :bind ("C-x g" . magit-status))
+#+end_src
+** Move text with M-shift-up/down
+#+begin_src emacs-lisp
+  (use-package move-text
+    :bind
+    (("M-S-<up>" . move-text-up)
+     ("M-S-<down>" . move-text-down)))
 #+end_src
 ** Smart parentheses
 #+begin_src emacs-lisp
@@ -194,6 +215,7 @@ Savehist so vertico knows the last command used.
     :mode "\\.y(a)?ml\\'")
 #+end_src
 ** General emacs configuration
+Removing menu bar, toolbar and scroll bar, which I don't really use, and binding C-x C-b to ibuffer, which is really pretty and nice.
 #+begin_src emacs-lisp
   (use-package emacs
     :init
@@ -220,6 +242,7 @@ Savehist so vertico knows the last command used.
 
     :config
     (windmove-default-keybindings)
+    (global-set-key (kbd "C-x C-b") 'ibuffer)
     (global-display-line-numbers-mode)
     (menu-bar-mode -1)
     (scroll-bar-mode -1)
