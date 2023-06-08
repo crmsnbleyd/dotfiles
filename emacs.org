@@ -226,6 +226,7 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
 #+begin_src emacs-lisp
   (use-package emacs
     :init
+    (put 'dired-find-alternate-file 'disabled nil)
     ;; Add prompt indicator to `completing-read-multiple'.
     ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
     (defun crm-indicator (args)
