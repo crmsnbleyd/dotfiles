@@ -181,6 +181,11 @@ Python IDE features (I do not prefer using LSP). Using advice for lazy loading, 
     (("M-S-<up>" . move-text-up)
      ("M-S-<down>" . move-text-down)))
 #+end_src
+** Nix mode
+#+begin_src emacs-lisp
+  (use-package nix-mode
+    :mode "\\.nix\\'")
+#+end_src
 ** Rainbow delimiters
 Really necessary for legibility of code blocks.
 #+begin_src emacs-lisp
@@ -252,6 +257,7 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
 	  '(read-only t cursor-intangible t face minibuffer-prompt))
     (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
     (add-hook 'eshell-mode-hook (lambda () (display-line-numbers-mode 0)))
+    (add-hook 'org-agenda-mode-hook (lambda () (display-line-numbers-mode 0)))
     ;; (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode 0)))
 
     (setq enable-recursive-minibuffers t)
