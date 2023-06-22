@@ -196,7 +196,9 @@ Really necessary for legibility of code blocks.
 ** Sly for Common Lisp
 #+begin_src emacs-lisp
   (use-package sly
-    :hook (lisp-mode))
+    :hook (lisp-mode)
+    :config
+    (setq inferior-lisp-program "/usr/local/bin/sbcl"))
 #+end_src
 ** Smart parentheses
 #+begin_src emacs-lisp
