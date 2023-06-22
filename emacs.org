@@ -75,8 +75,8 @@ z-c is hide-show close and z-o is hide-show open
 #+begin_src emacs-lisp
   (use-package company
     :hook
-    ((emacs-lisp-mode org-mode python-mode) . company-mode )
-    ((emacs-lisp-mode python-mode) . hs-minor-mode )
+    ((emacs-lisp-mode lisp-mode org-mode python-mode) . company-mode )
+    ((emacs-lisp-mode lisp-mode python-mode) . hs-minor-mode )
     :custom
     (company-idle-delay 0))
 #+end_src
@@ -192,6 +192,11 @@ Really necessary for legibility of code blocks.
   (use-package rainbow-delimiters
     :hook
     ((prog-mode . rainbow-delimiters-mode)))
+#+end_src
+** Sly for Common Lisp
+#+begin_src emacs-lisp
+  (use-package sly
+    :hook (lisp-mode))
 #+end_src
 ** Smart parentheses
 #+begin_src emacs-lisp
