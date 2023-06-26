@@ -90,7 +90,7 @@ Install and enable doom-modeline. Does not work well in TUI.
   :config
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-henna t))
+  (load-theme 'doom-material-dark t))
   
 (use-package doom-modeline
   :ensure t
@@ -207,7 +207,13 @@ Really necessary for legibility of code blocks.
   :init
   (require 'smartparens-config))
 #+end_src
-
+** Terraform mode
+[[https://github.com/hcl-emacs/terraform-mode][Github page]]
+#+begin_src emacs-lisp
+  (use-package terraform-mode
+    :mode "\\.tf\\'"
+    :hook (terraform-mode . outline-minor-mode))
+#+end_src
 ** Vertico
 Buffer completion and vertical listing of options.
 Savehist so vertico knows the last command used.
