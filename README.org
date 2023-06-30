@@ -6,9 +6,8 @@ Currently that consists of:
 
 - emacs
 - zsh
-- nix
 
-I prefer to use .zshrc for my zsh config
+I prefer to use .zshenv for my zsh config
 and the .emacs.d dir for the emacs config.
 
 Run M-x org-babel-tangle-file in the org file of your choice to

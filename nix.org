@@ -1,2 +1,0 @@
-#+title: Nix MacOS Setup
-#+author: Arnav Andrew Jose
