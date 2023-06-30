@@ -1,0 +1,20 @@
+#+title: zsh configuration
+#+author: Arnav Andrew Jose
+
+This probably would not be useful to anybody else.
+* Miscellaneous configuration
+  :PROPERTIES:
+  :header-args: :tangle ~/.zshenv
+  :END:
+#+begin_src zsh
+alias sed=gsed
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+path+=('${HOME}/.bun/bin')
+path+=('${HOME}/.jenv/bin')
+eval "$(/usr/local/bin/brew shellenv)"
+eval "$(jenv init -)"
+export PATH
+#+end_src
