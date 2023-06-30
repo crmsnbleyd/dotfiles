@@ -38,7 +38,7 @@ Simply execute the source block if you please.
 ** Enable lexical-binding and add link to repo
 #+begin_src  emacs-lisp
   ;; -*- lexical-binding: t -*-
-  ;; source: https://github.com/arnav-jose-iwx/dotfiles
+  ;; source: https://github.com/crmsnbleyd/dotfiles
 #+end_src
 
 ** Using straight.el
