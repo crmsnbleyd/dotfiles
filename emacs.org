@@ -7,6 +7,17 @@ configuration from my personal machine(s).
 I would like to try keeping this as minimalist and
 low-fuss as possible.
 
+* Tree-sitter libraries
+Building and moving tree sitter libraries to /usr/local/lib/tree-sitter/
+Simply execute the source block if you please.
+#+begin_src bash
+  git clone git@github.com:casouri/tree-sitter-module.git
+  cd tree-sitter-module
+  ./batch.sh
+  mv dist tree-sitter
+  mv tree-sitter /usr/local/lib/
+  cd -
+#+end_src
 * Before loading Init.el
   :PROPERTIES:
   :header-args: :tangle ~/.emacs.d/early-init.el
@@ -277,6 +288,7 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     (setq-default use-short-answers t)
 
     :config
+    (setf treesit-extra-load-path '("/usr/local/lib/tree-sitter"))
     (setq org-agenda-files (list (expand-file-name "org-agenda" "~/Documents")))
     (windmove-default-keybindings)
     (global-set-key (kbd "C-x C-b") 'ibuffer)
