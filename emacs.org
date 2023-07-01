@@ -86,7 +86,8 @@ z-c is hide-show close and z-o is hide-show open
 #+begin_src emacs-lisp
   (use-package company
     :hook
-    ((emacs-lisp-mode lisp-mode org-mode python-mode) . company-mode )
+    ((emacs-lisp-mode lisp-mode org-mode
+		      python-mode sly-mrepl-mode) . company-mode )
     ((emacs-lisp-mode lisp-mode python-mode) . hs-minor-mode )
     :custom
     (company-idle-delay 0))
