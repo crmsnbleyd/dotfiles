@@ -25,7 +25,7 @@ Simply execute the source block if you please.
 
 ** Disabling package.el and using straight.el instead
   #+begin_src emacs-lisp
-    ;; source: https://github.com/arnav-jose-iwx/dotfiles
+    ;; source: https://github.com/crmsnbleyd/dotfiles
     (setq package-enable-at-startup nil)
   #+end_src
 
@@ -294,7 +294,8 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     (windmove-default-keybindings)
     (global-set-key (kbd "C-x C-b") 'ibuffer)
     (global-display-line-numbers-mode)
-    (menu-bar-mode -1)
+    (unless (eq system-type 'darwin)
+      (menu-bar-mode -1))
     (scroll-bar-mode -1)
     (tool-bar-mode -1))
 #+end_src
