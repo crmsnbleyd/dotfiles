@@ -60,8 +60,9 @@ setting straight as the package manager for use-package.
 	  (eval-print-last-sexp)))
       (load bootstrap-file nil 'nomessage))
 
-    ;; Install use-package
-    (straight-use-package 'use-package)
+    ;; Install use-package if not bundled
+    (when (version< emacs-version "29.0")
+      (straight-use-package 'use-package))
 
     ;; use-package will use straight.el by default
     (use-package straight
@@ -289,7 +290,8 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     (setq-default use-short-answers t)
 
     :config
-    (setf treesit-extra-load-path '("/usr/local/lib/tree-sitter"))
+    (setq ispell-program-name "aspell")
+    (setq treesit-extra-load-path '("/usr/local/lib/tree-sitter"))
     (setq org-agenda-files (list (expand-file-name "org-agenda" "~/Documents")))
     (windmove-default-keybindings)
     (global-set-key (kbd "C-x C-b") 'ibuffer)
