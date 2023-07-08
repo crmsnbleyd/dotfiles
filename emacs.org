@@ -104,7 +104,7 @@ Install and enable doom-modeline. Does not work well in TUI.
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
   (load-theme 'doom-material-dark t))
-  
+
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
@@ -125,7 +125,7 @@ Press <leader> and the set-key to use the function.
 
 undo-fu for vi-like undo and redo functionality
 
-avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project page]] 
+avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project page]]
 #+begin_src  emacs-lisp
   (use-package evil
     :init (evil-mode)
@@ -171,7 +171,7 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
     :custom
     (evil-undo-system 'undo-fu))
 
-  (use-package avy  
+  (use-package avy
     :bind
     (:map evil-normal-state-map
 	  ("g s s" . avy-goto-char-2))
@@ -205,13 +205,6 @@ Python IDE features (I do not prefer using LSP). Using advice for lazy loading, 
 #+begin_src emacs-lisp
   (use-package nix-mode
     :mode "\\.nix\\'")
-#+end_src
-** Org mode config
-#+begin_src emacs-lisp
-  (use-package org-mode
-    :bind
-    :map org-mode-map
-    ("C-c l") . org-store-link)
 #+end_src
 ** Rainbow delimiters
 Really necessary for legibility of code blocks.
@@ -248,7 +241,7 @@ Savehist so vertico knows the last command used.
   (use-package vertico
     :init
     (vertico-mode)
-    :config 
+    :config
     (setq completion-styles '(basic substring partial-completion flex)
 	  read-file-name-completion-ignore-case t
 	  read-buffer-completion-ignore-case t
@@ -303,12 +296,16 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     (setq enable-recursive-minibuffers t)
     (setq-default use-short-answers t)
 
+    :bind
+    (("C-x C-b" . ibuffer)
+     :map org-mode-map
+     ("C-c l" . org-store-link))
+
     :config
     (setq ispell-program-name "aspell")
     (setq treesit-extra-load-path '("/usr/local/lib/tree-sitter"))
     (setq org-agenda-files (list (expand-file-name "org-agenda" "~/Documents")))
     (windmove-default-keybindings)
-    (global-set-key (kbd "C-x C-b") 'ibuffer)
     (global-display-line-numbers-mode)
     (unless (eq system-type 'darwin)
       (menu-bar-mode -1))
