@@ -109,6 +109,11 @@ Install and enable doom-modeline. Does not work well in TUI.
   :ensure t
   :init (doom-modeline-mode 1))
 #+end_src
+** Emmet support
+#+begin_src emacs-lisp
+  (use-package emmet-mode
+    :hook ((sgml-mode css-mode)))
+#+end_src
 ** Evil setup
 evil-mode initializes on startup.
 
@@ -125,7 +130,9 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
   (use-package evil
     :init (evil-mode)
     :config
-    (evil-define-key 'normal org-mode-map (kbd "<tab>") #'org-cycle))
+    (evil-define-key 'normal org-mode-map (kbd "<tab>") #'org-cycle)
+    :custom
+    (evil-move-beyond-eol t))
 
   (use-package evil-escape
     :after (evil)
@@ -198,6 +205,13 @@ Python IDE features (I do not prefer using LSP). Using advice for lazy loading, 
 #+begin_src emacs-lisp
   (use-package nix-mode
     :mode "\\.nix\\'")
+#+end_src
+** Org mode config
+#+begin_src emacs-lisp
+  (use-package org-mode
+    :bind
+    :map org-mode-map
+    ("C-c l") . org-store-link)
 #+end_src
 ** Rainbow delimiters
 Really necessary for legibility of code blocks.
