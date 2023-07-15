@@ -87,9 +87,11 @@ z-c is hide-show close and z-o is hide-show open
 #+begin_src emacs-lisp
   (use-package company
     :hook
-    ((emacs-lisp-mode lisp-mode org-mode
+    ((emacs-lisp-mode lisp-mode
+		      go-ts-mode org-mode
 		      python-mode sly-mrepl-mode) . company-mode )
-    ((emacs-lisp-mode lisp-mode python-mode) . hs-minor-mode )
+    ((emacs-lisp-mode go-ts-mode
+		      lisp-mode python-mode) . hs-minor-mode )
     :custom
     (company-idle-delay 0))
 #+end_src
@@ -187,6 +189,13 @@ Python IDE features (I do not prefer using LSP). Using advice for lazy loading, 
   :init
   (advice-add 'python-mode :before 'elpy-enable))
 #+end_src
+** Go mode
+#+begin_src emacs-lisp
+  ;; install gopls lsp server 
+  (use-package go-ts-mode
+    :mode "\\.go\\'"
+    :hook ((go-ts-mode . eglot-ensure)))
+#+end_src
 ** Magit (git porcelain)
 [[https://magit.vc][Magit home page]]
 
@@ -218,6 +227,7 @@ Really necessary for legibility of code blocks.
   (use-package sly
     :defer t
     :config
+    (setq org-babel-lisp-eval-fn #'sly-eval)
     (setq inferior-lisp-program "/usr/local/bin/sbcl"))
 #+end_src
 ** Smart parentheses
@@ -297,15 +307,19 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     (setq-default use-short-answers t)
 
     :bind
-    (("C-x C-b" . ibuffer)
-     :map org-mode-map
-     ("C-c l" . org-store-link))
+    (("C-x C-b" . ibuffer))
 
     :config
     (setq ispell-program-name "aspell")
     (setq treesit-extra-load-path '("/usr/local/lib/tree-sitter"))
     (setq org-agenda-files (list (expand-file-name "org-agenda" "~/Documents")))
     (windmove-default-keybindings)
+    (add-hook 'org-mode-hook
+	      (lambda ()
+		(define-key
+		 org-mode-map
+		 (kbd "C-c l")
+		 'org-store-link)))
     (global-display-line-numbers-mode)
     (unless (eq system-type 'darwin)
       (menu-bar-mode -1))
