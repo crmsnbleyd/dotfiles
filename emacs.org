@@ -29,17 +29,33 @@ Simply execute the source block if you please.
     (setq package-enable-at-startup nil)
   #+end_src
 
-
-* Emacs config
+* Elisp functions
   :PROPERTIES:
   :header-args: :tangle ~/.emacs.d/init.el
   :END:
-
 ** Enable lexical-binding and add link to repo
 #+begin_src  emacs-lisp
   ;; -*- lexical-binding: t -*-
   ;; source: https://github.com/crmsnbleyd/dotfiles
 #+end_src
+
+** Complete for eshell history in minibuffer (good with vertico)
+#+begin_src emacs-lisp
+  (defun eshell-history-complete ()
+    (interactive)
+    (let ((to-input (completing-read
+	     "Eshell history: "
+	     (delete-dups
+	      (ring-elements eshell-history-ring)))))
+      (end-of-line)
+      (eshell-kill-input)
+      (insert to-input)))
+#+end_src
+
+* Emacs config
+  :PROPERTIES:
+  :header-args: :tangle ~/.emacs.d/init.el
+  :END:
 
 ** Using straight.el
 
@@ -87,13 +103,29 @@ z-c is hide-show close and z-o is hide-show open
 #+begin_src emacs-lisp
   (use-package company
     :hook
-    ((emacs-lisp-mode lisp-mode
+    ((emacs-lisp-mode lisp-mode haskell-mode
 		      go-ts-mode org-mode
 		      python-mode sly-mrepl-mode) . company-mode )
-    ((emacs-lisp-mode go-ts-mode
+    ((emacs-lisp-mode go-ts-mode haskell-mode
 		      lisp-mode python-mode) . hs-minor-mode )
     :custom
     (company-idle-delay 0))
+
+  (use-package company-posframe
+   :after (company)
+   :init
+   (company-posframe-mode 1))
+#+end_src
+** Combobulate
+Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
+#+begin_src emacs-lisp
+  (use-package combobulate
+    :when (treesit-available-p)
+    :straight (combobulate
+	       :type git
+	       :host github
+	       :repo "mickeynp/combobulate")
+    :hook ((yaml-ts-mode) . combobulate-mode))
 #+end_src
 ** Doom-themes and doom-modeline
 Install doom-themes, enable bold and italics, and load a theme from the package
@@ -133,6 +165,7 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
     :init (evil-mode)
     :config
     (evil-define-key 'normal org-mode-map (kbd "<tab>") #'org-cycle)
+    (evil-define-key nil eshell-mode-map (kbd "M-r") #'eshell-history-complete)
     :custom
     (evil-move-beyond-eol t))
 
@@ -193,8 +226,21 @@ Python IDE features (I do not prefer using LSP). Using advice for lazy loading, 
 #+begin_src emacs-lisp
   ;; install gopls lsp server 
   (use-package go-ts-mode
+    :when (treesit-available-p)
     :mode "\\.go\\'"
     :hook ((go-ts-mode . eglot-ensure)))
+#+end_src
+** Haskell mode
+Will move to tree-sitter later
+#+begin_src emacs-lisp
+  (use-package haskell-mode
+    :straight (haskell-mode
+	       :type git
+	       :host github
+	       :repo "haskell/haskell-mode")
+    :mode "\\.hs\\'"
+    :hook ((haskell-mode . eglot-ensure)
+	   (haskell-mode . interactive-haskell-mode)))
 #+end_src
 ** Magit (git porcelain)
 [[https://magit.vc][Magit home page]]
@@ -266,10 +312,11 @@ Savehist so vertico knows the last command used.
 #+end_src
 ** Yaml mode
 #+begin_src emacs-lisp
-  (use-package yaml-mode
-    :bind (:map yaml-mode-map
+  (use-package yaml-ts-mode
+    :when (treesit-available-p)
+    :bind (:map yaml-ts-mode-map
 		("C-m" . newline-and-indent))
-    :mode "\\.y(a)?ml\\'")
+    :mode "\\.ya?ml\\'")
 #+end_src
 ** Yasnippets
 #+begin_src emacs-lisp
