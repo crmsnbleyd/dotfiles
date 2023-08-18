@@ -52,6 +52,26 @@ Simply execute the source block if you please.
       (insert to-input)))
 #+end_src
 
+** Insert metadata for Pelican markdown files
+#+begin_src emacs-lisp
+  (defun pelican-metadata-insert ()
+    (interactive)
+    (let
+	((date-string (format-time-string "%Y-%m-%d %H:%M")))
+      (insert
+       (format
+	"Title:
+Date: %s
+Modified: %s
+Tags:
+Category:
+Slug:
+Authors:
+Status:
+Summary:"
+	date-string date-string))))
+  
+#+end_src
 * Emacs config
   :PROPERTIES:
   :header-args: :tangle ~/.emacs.d/init.el
@@ -125,7 +145,7 @@ Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
 	       :type git
 	       :host github
 	       :repo "mickeynp/combobulate")
-    :hook ((yaml-ts-mode) . combobulate-mode))
+    :hook ((yaml-ts-mode go-ts-mode) . combobulate-mode))
 #+end_src
 ** Doom-themes and doom-modeline
 Install doom-themes, enable bold and italics, and load a theme from the package
@@ -226,7 +246,8 @@ Python IDE features (I do not prefer using LSP). Using advice for lazy loading, 
 #+begin_src emacs-lisp
   ;; install gopls lsp server 
   (use-package go-ts-mode
-    :when (treesit-available-p)
+    :when (and (boundp 'treesit-available-p)
+	       (treesit-available-p))
     :mode "\\.go\\'"
     :hook ((go-ts-mode . eglot-ensure)))
 #+end_src
@@ -247,7 +268,13 @@ Will move to tree-sitter later
 
 #+begin_src emacs-lisp
   (use-package magit
+    :commands (magit-status)
     :bind ("C-x g" . magit-status))
+#+end_src
+** Markdown mode
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :mode "\\.md\\'")
 #+end_src
 ** Move text with M-shift-up/down
 #+begin_src emacs-lisp
@@ -260,6 +287,17 @@ Will move to tree-sitter later
 #+begin_src emacs-lisp
   (use-package nix-mode
     :mode "\\.nix\\'")
+#+end_src
+** Org mode
+#+begin_src emacs-lisp
+  (use-package org
+    :straight nil
+    :bind
+    (:map org-mode-map
+	  ("C-c l" . org-store-link))
+    :config
+    (setq org-agenda-files
+	  `(,(expand-file-name "org-agenda" "~/Documents"))))
 #+end_src
 ** Rainbow delimiters
 Really necessary for legibility of code blocks.
@@ -313,7 +351,8 @@ Savehist so vertico knows the last command used.
 ** Yaml mode
 #+begin_src emacs-lisp
   (use-package yaml-ts-mode
-    :when (treesit-available-p)
+    :when (and (boundp 'treesit-available-p)
+	       (treesit-available-p))
     :bind (:map yaml-ts-mode-map
 		("C-m" . newline-and-indent))
     :mode "\\.ya?ml\\'")
@@ -359,15 +398,10 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     :config
     (setq ispell-program-name "aspell")
     (setq treesit-extra-load-path '("/usr/local/lib/tree-sitter"))
-    (setq org-agenda-files (list (expand-file-name "org-agenda" "~/Documents")))
+    (setq bookmark-save-flag 1)
     (windmove-default-keybindings)
-    (add-hook 'org-mode-hook
-	      (lambda ()
-		(define-key
-		 org-mode-map
-		 (kbd "C-c l")
-		 'org-store-link)))
     (global-display-line-numbers-mode)
+    (pixel-scroll-precision-mode 1)
     (unless (eq system-type 'darwin)
       (menu-bar-mode -1))
     (scroll-bar-mode -1)
