@@ -235,12 +235,10 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
 #+end_src
 
 ** Elpy
-Python IDE features (I do not prefer using LSP). Using advice for lazy loading, can just use (elpy-enable) instead.
+Python IDE features (I do not prefer using LSP).
 #+begin_src emacs-lisp
-(use-package elpy
-  :defer t
-  :init
-  (advice-add 'python-mode :before 'elpy-enable))
+  (use-package elpy
+    :hook ((python-mode . elpy-enable)))
 #+end_src
 ** Go mode
 #+begin_src emacs-lisp
