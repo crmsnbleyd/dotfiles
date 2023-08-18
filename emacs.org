@@ -31,17 +31,41 @@ Simply execute the source block if you please.
 
 * Elisp functions
   :PROPERTIES:
-  :header-args: :tangle ~/.emacs.d/init.el
+  :header-args: :tangle ~/.emacs.d/lisp/functions.el :mkdirp yes
   :END:
-** Enable lexical-binding and add link to repo
+** Enable lexical-binding
 #+begin_src  emacs-lisp
-  ;; -*- lexical-binding: t -*-
-  ;; source: https://github.com/crmsnbleyd/dotfiles
+  ;;; functions.el --- a simple package  -*- lexical-binding: t; -*-
+
+  ;; Copyright (C) 2023  Drew Jose
+
+  ;; Author: Drew Jose <arnav.jose@gmail.com>
+  ;; Keywords: lisp
+  ;; Version: 0.0.1
+
+  ;; This program is free software; you can redistribute it and/or modify
+  ;; it under the terms of the GNU General Public License as published by
+  ;; the Free Software Foundation, either version 3 of the License, or
+  ;; (at your option) any later version.
+
+  ;; This program is distributed in the hope that it will be useful,
+  ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ;; GNU General Public License for more details.
+
+  ;; You should have received a copy of the GNU General Public License
+  ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  ;;; Commentary:
+
+  ;; Put a description of the package here
+
+  ;;; Code:
 #+end_src
 
 ** Complete for eshell history in minibuffer (good with vertico)
 #+begin_src emacs-lisp
-  (defun eshell-history-complete ()
+  (defun functions/eshell-history-complete ()
     (interactive)
     (let ((to-input (completing-read
 	     "Eshell history: "
@@ -54,7 +78,7 @@ Simply execute the source block if you please.
 
 ** Insert metadata for Pelican markdown files
 #+begin_src emacs-lisp
-  (defun pelican-metadata-insert ()
+  (defun functions/pelican-metadata-insert ()
     (interactive)
     (let
 	((date-string (format-time-string "%Y-%m-%d %H:%M")))
@@ -72,11 +96,28 @@ Summary:"
 	date-string date-string))))
   
 #+end_src
+
+** Provide package
+#+begin_src  emacs-lisp
+  (provide 'functions)
+  ;;; functions.el ends here
+#+end_src
 * Emacs config
   :PROPERTIES:
   :header-args: :tangle ~/.emacs.d/init.el
   :END:
 
+** Enable lexical-binding and add link to repo
+#+begin_src  emacs-lisp
+  ;; -*- lexical-binding: t -*-
+  ;; source: https://github.com/crmsnbleyd/dotfiles
+#+end_src
+** Using convenience functions
+#+begin_src emacs-lisp
+  (use-package functions
+    :ensure nil
+    :load-path "lisp")
+#+end_src
 ** Using straight.el
 
 Bootstrapping it, installing use-package and then
@@ -123,11 +164,8 @@ z-c is hide-show close and z-o is hide-show open
 #+begin_src emacs-lisp
   (use-package company
     :hook
-    ((emacs-lisp-mode lisp-mode haskell-mode
-		      go-ts-mode org-mode
-		      python-mode sly-mrepl-mode) . company-mode )
-    ((emacs-lisp-mode go-ts-mode haskell-mode
-		      lisp-mode python-mode) . hs-minor-mode )
+    (prog-mode . company-mode)
+    (company-mode . hs-minor-mode)
     :custom
     (company-idle-delay 0))
 
@@ -281,11 +319,6 @@ Will move to tree-sitter later
     (("M-S-<up>" . move-text-up)
      ("M-S-<down>" . move-text-down)))
 #+end_src
-** Nix mode
-#+begin_src emacs-lisp
-  (use-package nix-mode
-    :mode "\\.nix\\'")
-#+end_src
 ** Org mode
 #+begin_src emacs-lisp
   (use-package org
@@ -341,7 +374,8 @@ Savehist so vertico knows the last command used.
 	  vertico-cycle t))
 
 
-  ;; Persist history over Emacs restarts. Vertico sorts by history position.
+  ;; Persist history over Emacs restarts.
+  ;; Vertico sorts by history position.
   (use-package savehist
     :init
     (savehist-mode))
@@ -360,7 +394,8 @@ Savehist so vertico knows the last command used.
   (use-package yasnippet
     :hook (prog-mode . yas-minor-mode))
 
-  (use-package yasnippet-snippets)
+  (use-package yasnippet-snippets
+    :after (yasnippet))
 #+end_src
 ** General emacs configuration
 Removing menu bar, toolbar and scroll bar, which I don't really use, and binding C-x C-b to ibuffer, which is really pretty and nice.
@@ -369,7 +404,8 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     :init
     (put 'dired-find-alternate-file 'disabled nil)
     ;; Add prompt indicator to `completing-read-multiple'.
-    ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
+    ;; We display [CRM<separator>], e.g., [CRM,]
+    ;; if the separator is a comma.
     (defun crm-indicator (args)
       (cons (format "[CRM%s] %s"
 		    (replace-regexp-in-string
