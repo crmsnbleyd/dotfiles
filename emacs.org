@@ -58,7 +58,7 @@ Simply execute the source block if you please.
 
   ;;; Commentary:
 
-  ;; Put a description of the package here
+  ;; Convenience functions for me
 
   ;;; Code:
 #+end_src
@@ -171,7 +171,7 @@ z-c is hide-show close and z-o is hide-show open
 
   (use-package company-posframe
    :after (company)
-   :init
+   :config
    (company-posframe-mode 1))
 #+end_src
 ** Combobulate
@@ -191,14 +191,12 @@ Install doom-themes, enable bold and italics, and load a theme from the package
 Install and enable doom-modeline. Does not work well in TUI.
 #+begin_src emacs-lisp
 (use-package doom-themes
-  :ensure t
   :config
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
   (load-theme 'doom-material-dark t))
 
 (use-package doom-modeline
-  :ensure t
   :init (doom-modeline-mode 1))
 #+end_src
 ** Emmet support
@@ -220,8 +218,8 @@ undo-fu for vi-like undo and redo functionality
 avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project page]]
 #+begin_src  emacs-lisp
   (use-package evil
-    :init (evil-mode)
     :config
+    (evil-mode)
     (evil-define-key 'normal org-mode-map (kbd "<tab>") #'org-cycle)
     (evil-define-key nil eshell-mode-map (kbd "M-r") #'eshell-history-complete)
     :custom
@@ -243,6 +241,7 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
     (evil-leader/set-key
       "." 'find-file
       ";" 'comment-or-uncomment-region
+      "z" 'repeat
       "c y" 'company-yasnippet
       "d x w" 'delete-trailing-whitespace
       "f s" 'save-buffer
@@ -349,7 +348,7 @@ Really necessary for legibility of code blocks.
 #+begin_src emacs-lisp
 (use-package smartparens
   :hook (prog-mode . smartparens-mode)
-  :init
+  :config
   (require 'smartparens-config))
 #+end_src
 ** Terraform mode
@@ -423,13 +422,12 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     (add-hook 'org-agenda-mode-hook (lambda () (display-line-numbers-mode 0)))
     ;; (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode 0)))
 
-    (setq enable-recursive-minibuffers t)
-    (setq-default use-short-answers t)
-
     :bind
     (("C-x C-b" . ibuffer))
 
     :config
+    (setq-default use-short-answers t)
+    (setq enable-recursive-minibuffers t)
     (setq ispell-program-name "aspell")
     (setq treesit-extra-load-path '("/usr/local/lib/tree-sitter"))
     (setq bookmark-save-flag 1)
