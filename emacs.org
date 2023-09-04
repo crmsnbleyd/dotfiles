@@ -162,17 +162,32 @@ Do not need to add any languages needed one-by-one.
 ** Completion and hide-show minor mode
 z-c is hide-show close and z-o is hide-show open
 #+begin_src emacs-lisp
-  (use-package company
-    :hook
-    (prog-mode . company-mode)
-    (company-mode . hs-minor-mode)
-    :custom
-    (company-idle-delay 0))
+  (use-package hideshow
+    :hook (prog-mode . hs-minor-mode))
 
-  (use-package company-posframe
-   :after (company)
-   :config
-   (company-posframe-mode 1))
+  (use-package corfu
+    ;; Optional customizations
+    :custom
+    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+    ;; (corfu-auto t)                 ;; Enable auto completion
+    ;; (corfu-separator ?\s)          ;; Orderless field separator
+    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+    ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+    ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+    ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+
+    ;; Enable Corfu only for certain modes.
+    ;; :hook ((prog-mode . corfu-mode)
+    ;;        (shell-mode . corfu-mode)
+    ;;        (eshell-mode . corfu-mode))
+
+    ;; Recommended: Enable Corfu globally.
+    ;; This is recommended since Dabbrev can be used globally (M-/).
+    ;; See also `global-corfu-modes'.
+    :init
+    (global-corfu-mode))
 #+end_src
 ** Combobulate
 Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
@@ -426,6 +441,9 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     (("C-x C-b" . ibuffer))
 
     :config
+    ;; Enable indentation+completion using the TAB key.
+    ;; `completion-at-point' is often bound to M-TAB.
+    (setq tab-always-indent 'complete)
     (setq-default use-short-answers t)
     (setq enable-recursive-minibuffers t)
     (setq ispell-program-name "aspell")
