@@ -200,19 +200,25 @@ Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
 	       :repo "mickeynp/combobulate")
     :hook ((yaml-ts-mode go-ts-mode) . combobulate-mode))
 #+end_src
+** Using ripgrep with emacs
+#+begin_src emacs-lisp
+  (use-package deadgrep
+    :bind
+    (("<f5>" . deadgrep)))
+#+end_src
 ** Doom-themes and doom-modeline
 Install doom-themes, enable bold and italics, and load a theme from the package
 
 Install and enable doom-modeline. Does not work well in TUI.
 #+begin_src emacs-lisp
-(use-package doom-themes
-  :config
-  (setq doom-themes-enable-bold t
-        doom-themes-enable-italic t)
-  (load-theme 'doom-material-dark t))
+  (use-package doom-themes
+    :config
+    (setq doom-themes-enable-bold t
+	  doom-themes-enable-italic t)
+    (load-theme 'doom-material-dark t))
 
-(use-package doom-modeline
-  :init (doom-modeline-mode 1))
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1))
 #+end_src
 ** Emmet support
 #+begin_src emacs-lisp
@@ -290,7 +296,9 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
 Python IDE features (I do not prefer using LSP).
 #+begin_src emacs-lisp
   (use-package elpy
-    :hook ((python-mode . elpy-enable)))
+    :hook ((python-mode . elpy-enable))
+    :config
+    (setq python-interpreter "python3"))
 #+end_src
 ** Go mode
 #+begin_src emacs-lisp
@@ -356,8 +364,9 @@ Really necessary for legibility of code blocks.
   (use-package sly
     :defer t
     :config
+    (setq-default sly-symbol-completion-mode nil)
     (setq org-babel-lisp-eval-fn #'sly-eval)
-    (setq inferior-lisp-program "/usr/local/bin/sbcl"))
+    (setq inferior-lisp-program "sbcl"))
 #+end_src
 ** Smart parentheses
 #+begin_src emacs-lisp
