@@ -238,58 +238,59 @@ undo-fu for vi-like undo and redo functionality
 
 avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project page]]
 #+begin_src  emacs-lisp
-  (use-package evil
-    :config
-    (evil-mode)
-    (evil-define-key 'normal org-mode-map (kbd "<tab>") #'org-cycle)
-    (evil-define-key nil eshell-mode-map (kbd "M-r") #'eshell-history-complete)
-    :custom
-    (evil-move-beyond-eol t))
+    (use-package evil
+      :config
+      (evil-mode)
+      (evil-define-key 'normal org-mode-map (kbd "<tab>") #'org-cycle)
+      (evil-define-key nil eshell-mode-map (kbd "M-r") #'eshell-history-complete)
+      :custom
+      (evil-move-beyond-eol t))
 
-  (use-package evil-escape
-    :after (evil)
-    :config
-    (evil-escape-mode)
-    :custom
-    (evil-escape-key-sequence "jk")
-    (evil-escape-delay 0.2))
+    (use-package evil-escape
+      :after (evil)
+      :config
+      (evil-escape-mode)
+      :custom
+      (evil-escape-key-sequence "jk")
+      (evil-escape-delay 0.2))
 
-  (use-package evil-leader
-    :after (evil)
-    :config
-    (global-evil-leader-mode t)
-    (evil-leader/set-leader "<SPC>")
-    (evil-leader/set-key
-      "." 'find-file
-      ";" 'comment-or-uncomment-region
-      "z" 'repeat
-      "c y" 'company-yasnippet
-      "d x w" 'delete-trailing-whitespace
-      "f s" 'save-buffer
-      "p f" 'forward-sexp
-      "p b" 'backward-sexp
-      "p u" 'sp-up-sexp
-      "p d" 'sp-down-sexp))
+    (use-package evil-leader
+      :after (evil)
+      :config
+      (global-evil-leader-mode t)
+      (evil-leader/set-leader "<SPC>")
+      (evil-leader/set-key
+	"." 'find-file
+	";" 'comment-or-uncomment-region
+	"z" 'repeat
+	"c y" 'company-yasnippet
+	"d x w" 'delete-trailing-whitespace
+	"f s" 'save-buffer
+	"p f" 'forward-sexp
+	"p b" 'backward-sexp
+	"p u" 'sp-up-sexp
+	"p d" 'sp-down-sexp
+        "p p" 'sp-previous-sexp))
 
-  (use-package evil-surround
-    :after (evil)
-    :config (global-evil-surround-mode))
+    (use-package evil-surround
+      :after (evil)
+      :config (global-evil-surround-mode))
 
-  (use-package undo-fu
-    :straight
-    (undo-fu :type git :host github :repo "emacsmirror/undo-fu")
-    :bind
-    (("C-z" . undo-fu-only-undo)
-     ("C-S-z" . undo-fu-only-redo))
-    :custom
-    (evil-undo-system 'undo-fu))
+    (use-package undo-fu
+      :straight
+      (undo-fu :type git :host github :repo "emacsmirror/undo-fu")
+      :bind
+      (("C-z" . undo-fu-only-undo)
+       ("C-S-z" . undo-fu-only-redo))
+      :custom
+      (evil-undo-system 'undo-fu))
 
-  (use-package avy
-    :bind
-    (:map evil-normal-state-map
-	  ("g s s" . avy-goto-char-2))
-    :custom
-    (avy-keys '(?a ?s ?f ?j ?k ?l ?z ?x ?c)))
+    (use-package avy
+      :bind
+      (:map evil-normal-state-map
+	    ("g s s" . avy-goto-char-2))
+      :custom
+      (avy-keys '(?a ?s ?f ?j ?k ?l ?z ?x ?c)))
 #+end_src
 
 ** Elpy
@@ -340,6 +341,15 @@ Will move to tree-sitter later
     :bind
     (("M-S-<up>" . move-text-up)
      ("M-S-<down>" . move-text-down)))
+#+end_src
+** Reading .epub books in Emacs
+#+begin_src emacs-lisp
+  (use-package nov
+    :straight
+    (nov
+     :type git :host nil
+     :repo "https://depp.brause.cc/nov.el.git")
+    :mode "\\.epub\\'")
 #+end_src
 ** Org mode
 #+begin_src emacs-lisp
