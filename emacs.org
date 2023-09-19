@@ -344,11 +344,15 @@ Will move to tree-sitter later
 #+end_src
 ** Reading .epub books in Emacs
 #+begin_src emacs-lisp
-  (use-package nov
+  (use-package nov-mode
     :straight
     (nov
      :type git :host nil
      :repo "https://depp.brause.cc/nov.el.git")
+    :config
+    (when
+      (boundp 'evil-set-initial-state)
+      (evil-set-initial-state 'nov-mode))
     :mode "\\.epub\\'")
 #+end_src
 ** Org mode
