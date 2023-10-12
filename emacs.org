@@ -1,23 +1,13 @@
 #+title: Emacs configuration
 #+author: Arnav Andrew Jose
 
-This emacs config is for my work system.
-I have opted to start afresh and not copy over any
+This emacs config was originally for my work system.
+I opted to start afresh and not copy over any
 configuration from my personal machine(s).
-I would like to try keeping this as minimalist and
+It is now my primary configuration.
+I am trying to keep it as minimalist and
 low-fuss as possible.
 
-* Tree-sitter libraries
-Building and moving tree sitter libraries to /usr/local/lib/tree-sitter/
-Simply execute the source block if you please.
-#+begin_src bash
-  git clone git@github.com:casouri/tree-sitter-module.git
-  cd tree-sitter-module
-  ./batch.sh
-  mv dist tree-sitter
-  mv tree-sitter /usr/local/lib/
-  cd -
-#+end_src
 * Before loading Init.el
   :PROPERTIES:
   :header-args: :tangle ~/.emacs.d/early-init.el
@@ -211,11 +201,7 @@ Install doom-themes, enable bold and italics, and load a theme from the package
 
 Install and enable doom-modeline. Does not work well in TUI.
 #+begin_src emacs-lisp
-  (use-package doom-themes
-    :config
-    (setq doom-themes-enable-bold t
-	  doom-themes-enable-italic t)
-    (load-theme 'doom-material-dark t))
+  (use-package doom-themes)
 
   (use-package doom-modeline
     :init (doom-modeline-mode 1))
@@ -301,6 +287,16 @@ Python IDE features (I do not prefer using LSP).
     :config
     (setq python-interpreter "python3"))
 #+end_src
+** Flexoki themes
+I made this theme!
+#+begin_src emacs-lisp
+(use-package flexoki-themes
+  :straight (flexoki-themes :type git
+			    :host github
+			    :repo "crmsnbleyd/flexoki-emacs-theme"
+			    :branch "trunk")
+  :config (load-theme 'flexoki-themes-light t))
+#+end_src
 ** Go mode
 #+begin_src emacs-lisp
   ;; install gopls lsp server 
@@ -321,6 +317,11 @@ Will move to tree-sitter later
     :mode "\\.hs\\'"
     :hook ((haskell-mode . eglot-ensure)
 	   (haskell-mode . interactive-haskell-mode)))
+#+end_src
+** Jenkinsfile mode
+#+begin_src emacs-lisp
+  (use-package jenkinsfile-mode
+    :defer t)
 #+end_src
 ** Magit (git porcelain)
 [[https://magit.vc][Magit home page]]
