@@ -462,7 +462,10 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     ;; (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode 0)))
 
     :bind
-    (("C-x C-b" . ibuffer))
+    (([remap list-buffers] . ibuffer)
+      ;; https://www.masteringemacs.org/article/text-expansion-hippie-expand
+     ([remap dabbrev-expand] . hippie-expand)
+     ("C-<tab>" . dabbrev-completion))
 
     :config
     ;; Enable indentation+completion using the TAB key.
