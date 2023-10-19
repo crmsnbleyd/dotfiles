@@ -51,6 +51,7 @@ low-fuss as possible.
   ;; Convenience functions for me
 
   ;;; Code:
+  (require 'subr-x)
 #+end_src
 
 ** Complete for eshell history in minibuffer (good with vertico)
@@ -68,23 +69,24 @@ low-fuss as possible.
 
 ** Insert metadata for Pelican markdown files
 #+begin_src emacs-lisp
-  (defun functions/pelican-metadata-insert ()
-    (interactive)
-    (let
-	((date-string (format-time-string "%Y-%m-%d %H:%M")))
-      (insert
-       (format
-	"Title:
-Date: %s
-Modified: %s
-Tags:
-Category:
-Slug:
-Authors:
-Status:
-Summary:"
-	date-string date-string))))
-  
+    (defun functions/pelican-metadata-insert ()
+      (interactive)
+      (let
+	  ((date-string (format-time-string "%Y-%m-%d %H:%M"))
+	   (slug (string-remove-suffix ".md" (buffer-name)))
+	(insert
+	 (format
+	  "Title:
+  Date: %s
+  Modified: %s
+  Tags:
+  Category:
+  Slug: %s
+  Authors:
+  Status: draft
+  Summary:"
+	  date-string date-string slug)))))
+
 #+end_src
 
 ** Provide package
@@ -109,7 +111,6 @@ Summary:"
     :load-path "lisp")
 #+end_src
 ** Using straight.el
-
 Bootstrapping it, installing use-package and then
 setting straight as the package manager for use-package.
 
@@ -159,7 +160,7 @@ z-c is hide-show close and z-o is hide-show open
     ;; Optional customizations
     :custom
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-    ;; (corfu-auto t)                 ;; Enable auto completion
+    (corfu-auto t)                 ;; Enable auto completion
     ;; (corfu-separator ?\s)          ;; Orderless field separator
     ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
     ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
@@ -197,8 +198,7 @@ Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
     (("<f5>" . deadgrep)))
 #+end_src
 ** Doom-themes and doom-modeline
-Install doom-themes, enable bold and italics, and load a theme from the package
-
+Install doom-themes, which I no longer use.
 Install and enable doom-modeline. Does not work well in TUI.
 #+begin_src emacs-lisp
   (use-package doom-themes)
@@ -290,19 +290,14 @@ Python IDE features (I do not prefer using LSP).
 ** Flexoki themes
 I made this theme!
 #+begin_src emacs-lisp
-(use-package flexoki-themes
-  :straight (flexoki-themes :type git
-			    :host github
-			    :repo "crmsnbleyd/flexoki-emacs-theme"
-			    :branch "trunk")
-  :config (load-theme 'flexoki-themes-light t))
+  (use-package flexoki-themes
+    :config (load-theme 'flexoki-themes-light t))
 #+end_src
 ** Go mode
 #+begin_src emacs-lisp
   ;; install gopls lsp server 
   (use-package go-ts-mode
-    :when (and (boundp 'treesit-available-p)
-	       (treesit-available-p))
+    :when (boundp 'treesit-install-language-grammar)
     :mode "\\.go\\'"
     :hook ((go-ts-mode . eglot-ensure)))
 #+end_src
@@ -411,7 +406,6 @@ Savehist so vertico knows the last command used.
 	  completion-ignore-case t
 	  vertico-cycle t))
 
-
   ;; Persist history over Emacs restarts.
   ;; Vertico sorts by history position.
   (use-package savehist
@@ -421,8 +415,7 @@ Savehist so vertico knows the last command used.
 ** Yaml mode
 #+begin_src emacs-lisp
   (use-package yaml-ts-mode
-    :when (and (boundp 'treesit-available-p)
-	       (treesit-available-p))
+    :when (boundp 'treesit-install-language-grammar)
     :bind (:map yaml-ts-mode-map
 		("C-m" . newline-and-indent))
     :mode "\\.ya?ml\\'")
