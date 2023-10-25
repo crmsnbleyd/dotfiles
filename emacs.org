@@ -231,6 +231,8 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
       (kbd "<tab>") #'org-cycle)
     (evil-define-key nil eshell-mode-map
       (kbd "M-r") #'eshell-history-complete)
+    (define-key evil-normal-state-map
+		(kbd "g s s") 'evil-avy-goto-char-2)
     :custom
     (evil-move-beyond-eol t)
     :hook (after-init . evil-mode))
@@ -274,9 +276,6 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
     (evil-undo-system 'undo-fu))
 
   (use-package avy
-    :bind
-    (:map evil-normal-state-map
-	  ("g s s" . avy-goto-char-2))
     :custom
     (avy-keys '(?a ?s ?f ?j ?k ?l ?z ?x ?c)))
 #+end_src
