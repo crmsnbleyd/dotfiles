@@ -252,14 +252,10 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
       "." 'find-file
       ";" 'comment-or-uncomment-region
       "z" 'repeat
-      "i s" 'yas-insert-snippet
       "d x w" 'delete-trailing-whitespace
       "f s" 'save-buffer
       "p f" 'forward-sexp
       "p b" 'backward-sexp
-      "p u" 'sp-up-sexp
-      "p d" 'sp-down-sexp
-      "p p" 'sp-previous-sexp
       "r b" 'revert-buffer)
     (evil-leader/set-key-for-mode 'org-mode
       "o e" 'org-edit-src-code))
@@ -329,7 +325,7 @@ Will move to tree-sitter later
 
 #+begin_src emacs-lisp
   (use-package magit
-    :commands (magit-status)
+    :defer t
     :bind ("C-x g" . magit-status))
 #+end_src
 ** Markdown mode
@@ -388,6 +384,11 @@ Really necessary for legibility of code blocks.
   (use-package smartparens
     :hook (prog-mode . smartparens-mode)
     :config
+    (when (fboundp 'evil-leader/set-key)
+      (evil-leader/set-key
+	"p u" 'sp-up-sexp
+	"p d" 'sp-down-sexp
+	"p p" 'sp-previous-sexp))
     (require 'smartparens-config))
 #+end_src
 ** Terraform mode
@@ -428,7 +429,11 @@ Savehist so vertico knows the last command used.
 ** Yasnippets
 #+begin_src emacs-lisp
   (use-package yasnippet
-    :hook (prog-mode . yas-minor-mode))
+    :hook (prog-mode . yas-minor-mode)
+    :config
+    (when (fboundp 'evil-leader/set-key)
+      (evil-leader/set-key
+	"i s" 'yas-insert-snippet)))
 
   (use-package yasnippet-snippets
     :after (yasnippet))
