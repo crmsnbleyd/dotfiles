@@ -19,10 +19,11 @@ low-fuss as possible.
     (setq package-enable-at-startup nil)
   #+end_src
 
-* Elisp functions
+* Personal elisp functions
   :PROPERTIES:
   :header-args: :tangle ~/.emacs.d/lisp/functions.el :mkdirp yes
   :END:
+  These might not be that useful for your specific use-case
 ** Enable lexical-binding
 #+begin_src  emacs-lisp
   ;;; functions.el --- a simple package  -*- lexical-binding: t; -*-
@@ -142,18 +143,6 @@ setting straight as the package manager for use-package.
       (straight-use-package-by-default t))
   #+end_src
 
-** Org Babel load all languages when needed
-Do not need to add any languages needed one-by-one.
-[[https://emacs.stackexchange.com/questions/20577/org-babel-load-all-languages-on-demand][Stack Exchange answer used as source]]
-#+begin_src emacs-lisp
-  (defadvice org-babel-execute-src-block (around load-language nil activate)
-    "Load language if needed."
-    (let ((language (org-element-property :language (org-element-at-point))))
-      (unless (cdr (assoc (intern language) org-babel-load-languages))
-	(add-to-list 'org-babel-load-languages (cons (intern language) t))
-	(org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
-      ad-do-it))
-#+end_src
 ** Completion and hide-show minor mode
 z-c is hide-show close and z-o is hide-show open
 #+begin_src emacs-lisp
@@ -202,17 +191,15 @@ Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
     (("<f5>" . deadgrep)))
 #+end_src
 ** Doom-modeline
-Install and enable doom-modeline. Does not work well in TUI.
+Modern and pretty modeline. Does not work well in TUI.
+Run ~nerd-icons-install-fonts~ to install the required pretty
+icons on your system (unless you wish to disable them)
 #+begin_src emacs-lisp
   (use-package doom-modeline
     :hook (after-init . doom-modeline-mode))
 #+end_src
-** Emmet support
-#+begin_src emacs-lisp
-  (use-package emmet-mode
-    :hook ((sgml-mode css-mode)))
-#+end_src
-** Evil setup
+** Evil setup (Vi bindings)
+Evil is vim emulation for emacs.
 evil-mode initializes on startup.
 
 evil-escape simulates <ESC> key in non-normal states
@@ -252,7 +239,8 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
     (evil-leader/set-leader "<SPC>")
     (evil-leader/set-key
       "." 'find-file
-      ";" 'comment-or-uncomment-region
+      ;; ";" 'comment-or-uncomment-region
+      ;; deprecated in favour of calling M-; `comment-dwim'
       "z" 'repeat
       "d x w" 'delete-trailing-whitespace
       "f s" 'save-buffer
@@ -280,44 +268,11 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
     (avy-keys '(?a ?s ?f ?j ?k ?l ?z ?x ?c)))
 #+end_src
 
-** Elpy
-Python IDE features (I do not prefer using LSP).
-#+begin_src emacs-lisp
-  (use-package elpy
-    :hook ((python-mode . elpy-enable))
-    :config
-    (setq python-interpreter "python3"))
-#+end_src
 ** Flexoki themes
 I made this theme!
 #+begin_src emacs-lisp
   (use-package flexoki-themes
     :config (load-theme 'flexoki-themes-light t))
-#+end_src
-** Go mode
-#+begin_src emacs-lisp
-  ;; install gopls lsp server 
-  (use-package go-ts-mode
-    :when (fboundp 'treesit-install-language-grammar)
-    :mode "\\.go\\'"
-    :hook ((go-ts-mode . eglot-ensure)))
-#+end_src
-** Haskell mode
-Will move to tree-sitter later
-#+begin_src emacs-lisp
-  (use-package haskell-mode
-    :straight (haskell-mode
-	       :type git
-	       :host github
-	       :repo "haskell/haskell-mode")
-    :mode "\\.hs\\'"
-    :hook ((haskell-mode . eglot-ensure)
-	   (haskell-mode . interactive-haskell-mode)))
-#+end_src
-** Jenkinsfile mode
-#+begin_src emacs-lisp
-  (use-package jenkinsfile-mode
-    :defer t)
 #+end_src
 ** Magit (git porcelain)
 [[https://magit.vc][Magit home page]]
@@ -327,17 +282,42 @@ Will move to tree-sitter later
     :defer t
     :bind ("C-x g" . magit-status))
 #+end_src
-** Markdown mode
-#+begin_src emacs-lisp
-  (use-package markdown-mode
-    :mode "\\.md\\'")
-#+end_src
 ** Move text with M-shift-up/down
 #+begin_src emacs-lisp
   (use-package move-text
     :bind
     (("M-S-<up>" . move-text-up)
      ("M-S-<down>" . move-text-down)))
+#+end_src
+** Org mode
+#+begin_src emacs-lisp
+  (use-package org
+    :straight nil
+    :bind
+    (:map org-mode-map
+	  ("C-c l" . org-store-link))
+    :config
+    (setq org-agenda-files
+	  `(,(expand-file-name "org-agenda" "~/Documents"))))
+#+end_src
+*** Org Babel load all languages when needed
+Do not need to add any languages needed one-by-one. This slows down loading org files a bit.
+[[https://emacs.stackexchange.com/questions/20577/org-babel-load-all-languages-on-demand][Stack Exchange answer used as source]]
+#+begin_src emacs-lisp
+  (defadvice org-babel-execute-src-block (around load-language nil activate)
+    "Load language if needed."
+    (let ((language (org-element-property :language (org-element-at-point))))
+      (unless (cdr (assoc (intern language) org-babel-load-languages))
+	(add-to-list 'org-babel-load-languages (cons (intern language) t))
+	(org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
+      ad-do-it))
+#+end_src
+** Rainbow delimiters
+Really necessary for legibility of code blocks.
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook
+    ((prog-mode . rainbow-delimiters-mode)))
 #+end_src
 ** Reading .epub books in Emacs
 #+begin_src emacs-lisp
@@ -351,33 +331,6 @@ Will move to tree-sitter later
       (evil-set-initial-state 'nov-mode 'emacs))
     :mode "\\.epub\\'")
 #+end_src
-** Org mode
-#+begin_src emacs-lisp
-  (use-package org
-    :straight nil
-    :bind
-    (:map org-mode-map
-	  ("C-c l" . org-store-link))
-    :config
-    (setq org-agenda-files
-	  `(,(expand-file-name "org-agenda" "~/Documents"))))
-#+end_src
-** Rainbow delimiters
-Really necessary for legibility of code blocks.
-#+begin_src emacs-lisp
-  (use-package rainbow-delimiters
-    :hook
-    ((prog-mode . rainbow-delimiters-mode)))
-#+end_src
-** Sly for Common Lisp
-#+begin_src emacs-lisp
-  (use-package sly
-    :defer t
-    :config
-    (setq-default sly-symbol-completion-mode nil)
-    (setq org-babel-lisp-eval-fn #'sly-eval)
-    (setq inferior-lisp-program "sbcl"))
-#+end_src
 ** Smart parentheses
 #+begin_src emacs-lisp
   (use-package smartparens
@@ -389,13 +342,6 @@ Really necessary for legibility of code blocks.
 	"p d" 'sp-down-sexp
 	"p p" 'sp-previous-sexp))
     (require 'smartparens-config))
-#+end_src
-** Terraform mode
-[[https://github.com/hcl-emacs/terraform-mode][Github page]]
-#+begin_src emacs-lisp
-  (use-package terraform-mode
-    :mode "\\.tf\\'"
-    :hook (terraform-mode . outline-minor-mode))
 #+end_src
 ** Vertico
 Buffer completion and vertical listing of options.
@@ -417,14 +363,6 @@ Savehist so vertico knows the last command used.
     :init
     (savehist-mode))
 #+end_src
-** Yaml mode
-#+begin_src emacs-lisp
-  (use-package yaml-ts-mode
-    :when (fboundp 'treesit-install-language-grammar)
-    :bind (:map yaml-ts-mode-map
-		("C-m" . newline-and-indent))
-    :mode "\\.ya?ml\\'")
-#+end_src
 ** Yasnippets
 #+begin_src emacs-lisp
   (use-package yasnippet
@@ -436,6 +374,94 @@ Savehist so vertico knows the last command used.
 
   (use-package yasnippet-snippets
     :after (yasnippet))
+#+end_src
+** Programming and markup languages support
+Feel free to disable any languages you don't require by simply
+running ~org-cut-subtree~ on the heading before exporting
+*** Common Lisp (Sly)
+#+begin_src emacs-lisp
+  (use-package sly
+    :defer t
+    :config
+    (setq-default sly-symbol-completion-mode nil)
+    (setq org-babel-lisp-eval-fn #'sly-eval)
+    (setq inferior-lisp-program "sbcl"))
+#+end_src
+*** Go mode
+#+begin_src emacs-lisp
+  ;; install gopls lsp server
+  (use-package go-ts-mode
+    :when (fboundp 'treesit-install-language-grammar)
+    :mode "\\.go\\'"
+    :hook ((go-ts-mode . eglot-ensure)))
+#+end_src
+*** Haskell mode
+Will move to tree-sitter later
+#+begin_src emacs-lisp
+  (use-package haskell-mode
+    :straight (haskell-mode
+	       :type git
+	       :host github
+	       :repo "haskell/haskell-mode")
+    :mode "\\.hs\\'"
+    :hook ((haskell-mode . eglot-ensure)
+	   (haskell-mode . interactive-haskell-mode)))
+#+end_src
+*** HTML/CSS snippets (Emmet)
+#+begin_src emacs-lisp
+  (use-package emmet-mode
+    :hook ((sgml-mode css-mode)))
+#+end_src
+*** Jenkinsfile mode
+#+begin_src emacs-lisp
+  (use-package jenkinsfile-mode
+    :defer t)
+#+end_src
+*** Markdown mode
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :mode "\\.md\\'")
+#+end_src
+*** Python (Elpy)
+Python IDE features (I do not prefer using LSP).
+#+begin_src emacs-lisp
+  (use-package elpy
+    :hook ((python-mode . elpy-enable))
+    :config
+    (setq python-interpreter "python3"))
+#+end_src
+*** Rust mode
+#+begin_src emacs-lisp
+  (use-package rust-ts-mode
+    :straight nil
+    :when (fboundp 'treesit-install-language-grammar)
+    :mode "\\.rs\\'"
+    :hook ((rust-ts-mode . eglot-ensure)))
+#+end_src
+*** Terraform mode
+[[https://github.com/hcl-emacs/terraform-mode][Github page]]
+#+begin_src emacs-lisp
+  (use-package terraform-mode
+    :mode "\\.tf\\'"
+    :hook (terraform-mode . outline-minor-mode))
+#+end_src
+*** Uiua mode
+An array language still in beta. I am working on the emacs mode currently.
+#+begin_src emacs-lisp
+  (use-package uiua-mode
+    :mode "\\.ua\\'"
+    :straight
+    (uiua-mode
+     :type git :host github
+     :repo "crmsnbleyd/uiua-mode"))
+#+end_src
+*** Yaml mode
+#+begin_src emacs-lisp
+  (use-package yaml-ts-mode
+    :when (fboundp 'treesit-install-language-grammar)
+    :bind (:map yaml-ts-mode-map
+		("C-m" . newline-and-indent))
+    :mode "\\.ya?ml\\'")
 #+end_src
 ** General emacs configuration
 Removing menu bar, toolbar and scroll bar, which I don't really use, and binding C-x C-b to ibuffer, which is really pretty and nice.
