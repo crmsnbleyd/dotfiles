@@ -340,7 +340,9 @@ Really necessary for legibility of code blocks.
       (evil-leader/set-key
 	"p u" 'sp-up-sexp
 	"p d" 'sp-down-sexp
-	"p p" 'sp-previous-sexp))
+	"p p" 'sp-previous-sexp
+	"p e" 'sp-end-of-sexp
+	"p a" 'sp-beginning-of-sexp))
     (require 'smartparens-config))
 #+end_src
 ** Vertico
@@ -422,11 +424,13 @@ Will move to tree-sitter later
   (use-package markdown-mode
     :mode "\\.md\\'")
 #+end_src
-*** Python (Elpy)
-Python IDE features (I do not prefer using LSP).
+*** Python
 #+begin_src emacs-lisp
-  (use-package elpy
-    :hook ((python-mode . elpy-enable))
+  (use-package python-ts-mode
+    :straight nil
+    :when (fboundp 'treesit-install-language-grammar)
+    :mode "\\.py\\'"
+    :hook ((python-ts-mode . eglot-ensure))
     :config
     (setq python-interpreter "python3"))
 #+end_src
@@ -448,12 +452,8 @@ Python IDE features (I do not prefer using LSP).
 *** Uiua mode
 An array language still in beta. I am working on the emacs mode currently.
 #+begin_src emacs-lisp
-  (use-package uiua-mode
-    :mode "\\.ua\\'"
-    :straight
-    (uiua-mode
-     :type git :host github
-     :repo "crmsnbleyd/uiua-mode"))
+  (use-package uiua-ts-mode
+    :mode "\\.ua\\'")
 #+end_src
 *** Yaml mode
 #+begin_src emacs-lisp
