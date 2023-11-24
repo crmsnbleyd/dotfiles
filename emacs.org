@@ -425,6 +425,7 @@ Will move to tree-sitter later
     :mode "\\.md\\'")
 #+end_src
 *** Python
+Elpy functionality without elpy overhead.
 #+begin_src emacs-lisp
   (use-package python-ts-mode
     :straight nil
@@ -433,6 +434,12 @@ Will move to tree-sitter later
     :hook ((python-ts-mode . eglot-ensure))
     :config
     (setq python-interpreter "python3"))
+
+  (use-package pyvenv
+   :after (python-ts-mode))
+
+  (use-package python-black
+   :after (python-ts-mode))
 #+end_src
 *** Rust mode
 #+begin_src emacs-lisp
