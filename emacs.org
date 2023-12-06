@@ -182,7 +182,9 @@ Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
 	       :type git
 	       :host github
 	       :repo "mickeynp/combobulate")
-    :hook ((yaml-ts-mode go-ts-mode) . combobulate-mode))
+    :hook
+    ((go-ts-mode python-ts-mode yaml-ts-mode)
+     . combobulate-mode))
 #+end_src
 ** Using ripgrep with emacs
 #+begin_src emacs-lisp
