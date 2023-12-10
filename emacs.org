@@ -270,6 +270,14 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
     (avy-keys '(?a ?s ?f ?j ?k ?l ?z ?x ?c)))
 #+end_src
 
+** Exec path to reflect shell PATH variable
+Otherwise we have to resort to silly hacks.
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :when (or (memq window-system'(mac ns x))
+	    (daemonp))
+  :config (exec-path-from-shell-initialize))
+#+end_src
 ** Flexoki themes
 I made this theme!
 #+begin_src emacs-lisp
@@ -387,6 +395,8 @@ running ~org-cut-subtree~ on the heading before exporting
   (use-package sly
     :defer t
     :config
+    (define-key sly-mrepl-mode-map (kbd "M-r")
+		'comint-history-isearch-backward)
     (setq-default sly-symbol-completion-mode nil)
     (setq org-babel-lisp-eval-fn #'sly-eval)
     (setq inferior-lisp-program "sbcl"))
