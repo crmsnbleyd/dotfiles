@@ -143,6 +143,19 @@ setting straight as the package manager for use-package.
       (straight-use-package-by-default t))
   #+end_src
 
+** Combobulate
+Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
+#+begin_src emacs-lisp
+  (use-package combobulate
+    :when (treesit-available-p)
+    :straight (combobulate
+	       :type git
+	       :host github
+	       :repo "mickeynp/combobulate")
+    :hook
+    ((go-ts-mode python-ts-mode yaml-ts-mode)
+     . combobulate-mode))
+#+end_src
 ** Completion and hide-show minor mode
 z-c is hide-show close and z-o is hide-show open
 #+begin_src emacs-lisp
@@ -172,19 +185,6 @@ z-c is hide-show close and z-o is hide-show open
     ;; See also `global-corfu-modes'.
     :init
     (global-corfu-mode))
-#+end_src
-** Combobulate
-Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
-#+begin_src emacs-lisp
-  (use-package combobulate
-    :when (treesit-available-p)
-    :straight (combobulate
-	       :type git
-	       :host github
-	       :repo "mickeynp/combobulate")
-    :hook
-    ((go-ts-mode python-ts-mode yaml-ts-mode)
-     . combobulate-mode))
 #+end_src
 ** Using ripgrep with emacs
 #+begin_src emacs-lisp
@@ -395,10 +395,13 @@ running ~org-cut-subtree~ on the heading before exporting
   (use-package sly
     :defer t
     :config
-    (define-key sly-mrepl-mode-map (kbd "M-r")
-		'comint-history-isearch-backward)
     (setq-default sly-symbol-completion-mode nil)
     (setq org-babel-lisp-eval-fn #'sly-eval)
+    (add-hook 'sly-mrepl-hook
+	      (lambda ()
+		(define-key sly-mrepl-mode-map
+			    (kbd "M-r")
+			    'comint-history-isearch-backward)))
     (setq inferior-lisp-program "sbcl"))
 #+end_src
 *** Go mode
