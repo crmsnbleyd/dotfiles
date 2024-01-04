@@ -76,10 +76,10 @@ low-fuss as possible.
     (interactive)
     (let
 	((date-string (format-time-string "%Y-%m-%d %H:%M"))
-	 (slug (string-remove-suffix ".md" (buffer-name)))
-	 (insert
-	  (format
-	   "Title:
+	 (slug (string-remove-suffix ".md" (buffer-name))))
+      (insert
+       (format
+	"Title:
   Date: %s
   Modified: %s
   Tags:
@@ -88,7 +88,7 @@ low-fuss as possible.
   Authors:
   Status: draft
   Summary:"
-	   date-string date-string slug)))))
+	date-string date-string slug))))
 #+end_src
 
 ** Provide package
