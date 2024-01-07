@@ -248,6 +248,7 @@ avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project 
       "f s" 'save-buffer
       "p f" 'forward-sexp
       "p b" 'backward-sexp
+      "p t" 'transpose-sexps
       "r b" 'revert-buffer)
     (evil-leader/set-key-for-mode 'org-mode
       "o e" 'org-edit-src-code))
@@ -352,7 +353,8 @@ Really necessary for legibility of code blocks.
 	"p d" 'sp-down-sexp
 	"p p" 'sp-previous-sexp
 	"p e" 'sp-end-of-sexp
-	"p a" 'sp-beginning-of-sexp))
+	"p a" 'sp-beginning-of-sexp
+	"p j" 'sp-join-sexp))
     (require 'smartparens-config))
 #+end_src
 ** Vertico
