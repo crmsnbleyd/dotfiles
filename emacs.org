@@ -70,6 +70,7 @@ low-fuss as possible.
 #+end_src
 
 ** Insert metadata for Pelican markdown files
+Really hardcoded right now
 #+begin_src emacs-lisp
   ;;;###autoload
   (defun functions/pelican-metadata-insert ()
@@ -89,6 +90,46 @@ low-fuss as possible.
   Status: draft
   Summary:"
 	date-string date-string slug))))
+#+end_src
+** Load some words for monkeytype
+#+begin_src emacs-lisp
+  (defun functions/monkeytype-load-and-start (arg &optional file-name num-words)
+    (interactive "p")
+    (when (/= arg 1)
+      (setf file-name (read-file-name "Insert name of file with words: "))
+      (setf num-words (read-number "Insert number of words you require: " 50)))
+
+    (let ((res '())
+	  (final-buffer "*Monkeytype-words*"))
+
+      (with-temp-buffer
+	(insert-file-contents
+	 (or file-name
+	     (expand-file-name
+	      "wikipedia2k.txt"
+	      "~/.monkeytype")))
+
+	(setq res
+	      (cl-loop repeat (or num-words 50)
+		       for idx in (sort
+				   (cl-loop for i from 0 to 49
+					    collect (random 2000))
+				   '<)
+		       collect
+		       (progn
+			 (goto-char (point-min))
+			 (forward-word idx)
+			 (buffer-substring-no-properties
+			  (point)
+			  (progn (forward-word) (point)))))))
+
+      (with-current-buffer (get-buffer-create final-buffer)
+	(erase-buffer)
+	(insert (string-trim-left
+		 (mapconcat 'identity res)
+		 " ")))
+      (switch-to-buffer final-buffer)
+      (monkeytype-buffer)))
 #+end_src
 
 ** Provide package
@@ -111,6 +152,7 @@ low-fuss as possible.
   (use-package functions
     :commands
     (functions/eshell-history-complete
+     functions/monkeytype-load-and-start
      functions/pelican-metadata-insert)
     :ensure nil
     :load-path "lisp")
