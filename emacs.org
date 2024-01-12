@@ -53,6 +53,7 @@ low-fuss as possible.
 
   ;;; Code:
   (require 'subr-x)
+  (require 'monkeytype)
 #+end_src
 
 ** Complete for eshell history in minibuffer (good with vertico)
@@ -69,8 +70,8 @@ low-fuss as possible.
       (insert to-input)))
 #+end_src
 
-** Insert metadata for Pelican markdown files
-Really hardcoded right now
+** Pelican helpers
+~pelican-initalise-file~ even works with subdirectories!
 #+begin_src emacs-lisp
   ;;;###autoload
   (defun functions/pelican-metadata-insert ()
@@ -90,6 +91,15 @@ Really hardcoded right now
   Status: draft
   Summary:"
 	date-string date-string slug))))
+
+  ;;;###autoload
+  (defun functions/pelican-initialise-file (slug)
+    (interactive "sEnter slug of post: ")
+    (let ((pelican-content-dir "~/writing/blog/content"))
+      (find-file
+       (expand-file-name (format "%s.md" slug)
+			 pelican-content-dir))
+      (functions/pelican-metadata-insert)))
 #+end_src
 ** Load some words for monkeytype
 #+begin_src emacs-lisp
