@@ -110,7 +110,10 @@ low-fuss as possible.
       (setf num-words (read-number "Insert number of words you require: " 50)))
 
     (let ((res '())
-	  (final-buffer "*Monkeytype-words*"))
+	  (final-buffer "*Monkeytype-words*")
+	  (true-num-words (or num-words 50))
+	  (num-buffer-words nil)
+	  (indices nil))
 
       (with-temp-buffer
 	(insert-file-contents
@@ -119,28 +122,34 @@ low-fuss as possible.
 	      "wikipedia2k.txt"
 	      "~/.monkeytype")))
 
+	(setq num-buffer-words
+	      (count-words
+	       (point-min)
+	       (point-max)))
+	(setq indices
+	      (sort
+	       (cl-loop for i from 0 below true-num-words
+			collect
+			(random (- num-buffer-words i)))
+	       '<))
 	(setq res
-	      (cl-loop repeat (or num-words 50)
-		       for idx in (sort
-				   (cl-loop for i from 0 to 49
-					    collect
-					    (count-words
-					     (point-min)
-					     (point-max)))
-				   '<)
+	      (cl-loop repeat true-num-words
+		       for idx in indices
 		       collect
 		       (progn
 			 (goto-char (point-min))
 			 (forward-word idx)
-			 (buffer-substring-no-properties
-			  (point)
-			  (progn (forward-word) (point)))))))
+			 (let ((word-to-return
+				(string-trim 
+				 (buffer-substring-no-properties
+				  (point)
+				  (progn (forward-word) (point))))))
+			   (kill-word -1)
+			   word-to-return)))))
 
       (with-current-buffer (get-buffer-create final-buffer)
 	(erase-buffer)
-	(insert (string-trim-left
-		 (mapconcat 'identity res)
-		 " ")))
+	(insert (mapconcat 'identity res " ")))
       (switch-to-buffer final-buffer)
       (monkeytype-buffer)))
 #+end_src
