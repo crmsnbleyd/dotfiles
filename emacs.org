@@ -175,7 +175,8 @@ low-fuss as possible.
     :commands
     (functions/eshell-history-complete
      functions/monkeytype-load-and-start
-     functions/pelican-metadata-insert)
+     functions/pelican-metadata-insert
+     functions/pelican-initialise-file)
     :ensure nil
     :load-path "lisp")
 #+end_src
@@ -341,11 +342,11 @@ Otherwise we have to resort to silly hacks.
 	    (daemonp))
   :config (exec-path-from-shell-initialize))
 #+end_src
-** Flexoki themes
+** Themes
 I made this theme!
 #+begin_src emacs-lisp
   (use-package flexoki-themes
-    :config (load-theme 'flexoki-themes-light t))
+      :config (load-theme 'flexoki-themes-light t))
 #+end_src
 ** Learning to touch type
 [[https://github.com/jpablobr/emacs-monkeytype][Monkeytype]]
@@ -409,6 +410,14 @@ Really necessary for legibility of code blocks.
     (when (fboundp 'evil-set-initial-state)
       (evil-set-initial-state 'nov-mode 'emacs))
     :mode "\\.epub\\'")
+#+end_src
+** Reading PDFs in Emacs
+#+begin_src emacs-lisp
+  (use-package pdf-tools
+    :mode ("\\.pdf\\'" . pdf-view-mode)
+    :hook
+    (pdf-view-mode .
+     (lambda () (display-line-numbers-mode 0))))
 #+end_src
 ** Smart parentheses
 #+begin_src emacs-lisp
