@@ -140,7 +140,7 @@ low-fuss as possible.
 			 (goto-char (point-min))
 			 (forward-word idx)
 			 (let ((word-to-return
-				(string-trim 
+				(string-trim
 				 (buffer-substring-no-properties
 				  (point)
 				  (progn (forward-word) (point))))))
@@ -208,6 +208,26 @@ setting straight as the package manager for use-package.
       (straight-use-package-by-default t))
   #+end_src
 
+** Avy and undo-fu
+undo-fu for vi-like undo and redo functionality
+
+avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project page]]
+#+begin_src  emacs-lisp
+  (use-package undo-fu
+    :straight
+    (undo-fu :type git :host github :repo "emacsmirror/undo-fu")
+    :bind
+    (("C-z" . undo-fu-only-undo)
+     ("C-S-z" . undo-fu-only-redo))
+    :custom
+    (evil-undo-system 'undo-fu))
+
+  (use-package avy
+    :bind ("C-c C-;" . avy-goto-char-2)
+    :custom
+    (avy-keys '(?a ?s ?f ?j ?k ?l ?z ?x ?c)))
+#+end_src
+
 ** Combobulate
 Paredit + Tree-sitter! [[https://github.com/mickeynp/combobulate][Github]]
 #+begin_src emacs-lisp
@@ -251,12 +271,6 @@ z-c is hide-show close and z-o is hide-show open
     :init
     (global-corfu-mode))
 #+end_src
-** Using ripgrep with emacs
-#+begin_src emacs-lisp
-  (use-package deadgrep
-    :bind
-    (("<f5>" . deadgrep)))
-#+end_src
 ** Doom-modeline
 Modern and pretty modeline. Does not work well in TUI.
 Run ~nerd-icons-install-fonts~ to install the required pretty
@@ -265,75 +279,6 @@ icons on your system (unless you wish to disable them)
   (use-package doom-modeline
     :hook (after-init . doom-modeline-mode))
 #+end_src
-** Evil setup (Vi bindings)
-Evil is vim emulation for emacs.
-evil-mode initializes on startup.
-
-evil-escape simulates <ESC> key in non-normal states
-when pressing 'evil-escape-key-sequence.
-
-evil-leader works in motion and normal states.
-Press <leader> and the set-key to use the function.
-
-undo-fu for vi-like undo and redo functionality
-
-avy for tree-like jump to marks : [[https://github.com/abo-abo/avy][Avy project page]]
-#+begin_src  emacs-lisp
-  (use-package evil
-    :config
-    (evil-define-key 'normal org-mode-map
-      (kbd "<tab>") #'org-cycle)
-    (evil-define-key nil eshell-mode-map
-      (kbd "M-r") #'eshell-history-complete)
-    (define-key evil-normal-state-map
-		(kbd "g s s") 'evil-avy-goto-char-2)
-    :custom
-    (evil-move-beyond-eol t)
-    :hook (after-init . evil-mode))
-
-  (use-package evil-escape
-    :after (evil)
-    :config
-    (evil-escape-mode)
-    :custom
-    (evil-escape-key-sequence "jk")
-    (evil-escape-delay 0.2))
-
-  (use-package evil-leader
-    :after (evil)
-    :config
-    (global-evil-leader-mode t)
-    (evil-leader/set-leader "<SPC>")
-    (evil-leader/set-key
-      "." 'find-file
-      ;; ";" 'comment-or-uncomment-region
-      ;; deprecated in favour of calling M-; `comment-dwim'
-      "z" 'repeat
-      "d x w" 'delete-trailing-whitespace
-      "f s" 'save-buffer
-      "p f" 'forward-sexp
-      "p b" 'backward-sexp
-      "p t" 'transpose-sexps
-      "r b" 'revert-buffer))
-
-  (use-package evil-surround
-    :after (evil)
-    :config (global-evil-surround-mode))
-
-  (use-package undo-fu
-    :straight
-    (undo-fu :type git :host github :repo "emacsmirror/undo-fu")
-    :bind
-    (("C-z" . undo-fu-only-undo)
-     ("C-S-z" . undo-fu-only-redo))
-    :custom
-    (evil-undo-system 'undo-fu))
-
-  (use-package avy
-    :custom
-    (avy-keys '(?a ?s ?f ?j ?k ?l ?z ?x ?c)))
-#+end_src
-
 ** Exec path to reflect shell PATH variable
 Otherwise we have to resort to silly hacks.
 #+begin_src emacs-lisp
@@ -361,6 +306,98 @@ I made this theme!
   (use-package magit
     :defer t
     :bind ("C-x g" . magit-status))
+#+end_src
+** Meow modal editing
+#+begin_src emacs-lisp
+  (use-package meow
+    :config
+    (defun meow-setup ()
+    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+    (meow-motion-overwrite-define-key
+     '("j" . meow-next)
+     '("k" . meow-prev)
+     '("<escape>" . ignore))
+    (meow-leader-define-key
+     ;; SPC j/k will run the original command in MOTION state.
+     '("j" . "H-j")
+     '("k" . "H-k")
+     ;; Use SPC (0-9) for digit arguments.
+     '("1" . meow-digit-argument)
+     '("2" . meow-digit-argument)
+     '("3" . meow-digit-argument)
+     '("4" . meow-digit-argument)
+     '("5" . meow-digit-argument)
+     '("6" . meow-digit-argument)
+     '("7" . meow-digit-argument)
+     '("8" . meow-digit-argument)
+     '("9" . meow-digit-argument)
+     '("0" . meow-digit-argument)
+     '("/" . meow-keypad-describe-key)
+     '("?" . meow-cheatsheet))
+    (meow-normal-define-key
+     '("0" . meow-expand-0)
+     '("9" . meow-expand-9)
+     '("8" . meow-expand-8)
+     '("7" . meow-expand-7)
+     '("6" . meow-expand-6)
+     '("5" . meow-expand-5)
+     '("4" . meow-expand-4)
+     '("3" . meow-expand-3)
+     '("2" . meow-expand-2)
+     '("1" . meow-expand-1)
+     '("-" . negative-argument)
+     '(";" . meow-reverse)
+     '("," . meow-inner-of-thing)
+     '("." . meow-bounds-of-thing)
+     '("[" . meow-beginning-of-thing)
+     '("]" . meow-end-of-thing)
+     '("a" . meow-append)
+     '("A" . meow-open-below)
+     '("b" . meow-back-word)
+     '("B" . meow-back-symbol)
+     '("c" . meow-change)
+     '("d" . meow-delete)
+     '("D" . meow-backward-delete)
+     '("e" . meow-next-word)
+     '("E" . meow-next-symbol)
+     '("f" . meow-find)
+     '("g" . meow-cancel-selection)
+     '("G" . meow-grab)
+     '("h" . meow-left)
+     '("H" . meow-left-expand)
+     '("i" . meow-insert)
+     '("I" . meow-open-above)
+     '("j" . meow-next)
+     '("J" . meow-next-expand)
+     '("k" . meow-prev)
+     '("K" . meow-prev-expand)
+     '("l" . meow-right)
+     '("L" . meow-right-expand)
+     '("m" . meow-join)
+     '("n" . meow-search)
+     '("o" . meow-block)
+     '("O" . meow-to-block)
+     '("p" . meow-yank)
+     '("q" . meow-quit)
+     '("Q" . meow-goto-line)
+     '("r" . meow-replace)
+     '("R" . meow-swap-grab)
+     '("s" . meow-kill)
+     '("t" . meow-till)
+     '("u" . meow-undo)
+     '("U" . meow-undo-in-selection)
+     '("v" . meow-visit)
+     '("w" . meow-mark-word)
+     '("W" . meow-mark-symbol)
+     '("x" . meow-line)
+     '("X" . meow-goto-line)
+     '("y" . meow-save)
+     '("Y" . meow-sync-grab)
+     '("z" . meow-pop-selection)
+     '("'" . repeat)
+     '("<escape>" . ignore)))
+    (meow-setup)
+    (meow-global-mode 1))
 #+end_src
 ** Move text with M-shift-up/down
 #+begin_src emacs-lisp
@@ -419,19 +456,25 @@ Really necessary for legibility of code blocks.
     (pdf-view-mode .
      (lambda () (display-line-numbers-mode 0))))
 #+end_src
+** Ripgrep with emacs
+#+begin_src emacs-lisp
+  (use-package deadgrep
+    :bind
+    (("<f5>" . deadgrep)))
+#+end_src
 ** Smart parentheses
 #+begin_src emacs-lisp
   (use-package smartparens
     :hook (prog-mode . smartparens-mode)
+    :bind
+    ("C-c C-p C-u" . sp-up-sexp)
+    ("C-c C-p C-d" . sp-down-sexp)
+    ("C-c C-p C-b" . sp-backward-sexp)
+    ("C-c C-p C-f" . sp-forward-sexp)
+    ("C-c C-p C-a" . sp-beginning-of-sexp)
+    ("C-c C-p C-e" . sp-end-of-sexp)
+    ("C-c C-p C-p" . sp-previous-sexp)
     :config
-    (when (fboundp 'evil-leader/set-key)
-      (evil-leader/set-key
-	"p u" 'sp-up-sexp
-	"p d" 'sp-down-sexp
-	"p p" 'sp-previous-sexp
-	"p e" 'sp-end-of-sexp
-	"p a" 'sp-beginning-of-sexp
-	"p j" 'sp-join-sexp))
     (require 'smartparens-config))
 #+end_src
 ** Vertico
