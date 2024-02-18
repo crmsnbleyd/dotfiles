@@ -467,13 +467,9 @@ Really necessary for legibility of code blocks.
   (use-package smartparens
     :hook (prog-mode . smartparens-mode)
     :bind
-    ("C-c C-p C-u" . sp-up-sexp)
-    ("C-c C-p C-d" . sp-down-sexp)
-    ("C-c C-p C-b" . sp-backward-sexp)
-    ("C-c C-p C-f" . sp-forward-sexp)
-    ("C-c C-p C-a" . sp-beginning-of-sexp)
-    ("C-c C-p C-e" . sp-end-of-sexp)
-    ("C-c C-p C-p" . sp-previous-sexp)
+    ("C-M-S-a" . sp-beginning-of-sexp)
+    ("C-M-S-e" . sp-end-of-sexp)
+    ("C-M-S-p" . sp-previous-sexp)
     :config
     (require 'smartparens-config))
 #+end_src
@@ -560,6 +556,11 @@ Will move to tree-sitter later
 #+begin_src emacs-lisp
   (use-package markdown-mode
     :mode "\\.md\\'")
+#+end_src
+*** Nix mode
+#+begin_src emacs-lisp
+  (use-package nix-mode
+    :mode "\\.nix\\'")
 #+end_src
 *** Python
 Elpy functionality without elpy overhead.
@@ -649,6 +650,8 @@ Removing menu bar, toolbar and scroll bar, which I don't really use, and binding
     (setq treesit-extra-load-path '("/usr/local/lib/tree-sitter"))
     (setq bookmark-save-flag 1)
     (windmove-default-keybindings)
+    ;; use Meta+Space to escape insert mode
+    (global-set-key (kbd "M-SPC") (kbd "<escape>")) 
     (global-display-line-numbers-mode)
     (pixel-scroll-precision-mode 1)
     (unless (eq system-type 'darwin)
